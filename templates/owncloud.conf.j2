@@ -1,0 +1,13 @@
+Alias {{owncloud_alias}} "{{owncloud_path}}/owncloud"
+
+<Directory {{owncloud_path}}/owncloud>
+  Options +FollowSymlinks
+  AllowOverride All
+
+ <IfModule mod_dav.c>
+  Dav off
+ </IfModule>
+
+ SetEnv HOME {{owncloud_path}}/owncloud
+ SetEnv HTTP_HOME {{owncloud_path}}/owncloud
+</Directory>

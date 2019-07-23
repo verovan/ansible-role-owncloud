@@ -1,0 +1,65 @@
+---
+- name: Community - Download OwnCloud release
+  get_url:
+    url: "{{owncloud_url}}-{{owncloud_version}}.tar.bz2"
+    dest: "{{owncloud_download_path}}-{{owncloud_version}}.tar.bz2"
+    mode: "0644"
+
+- name: Unarchive
+  unarchive:
+    src: "{{owncloud_download_path}}-{{owncloud_version}}.tar.bz2"
+    dest: "{{owncloud_path}}"
+    remote_src: yes
+
+- name: Add apache vhost configuration.
+  template:
+    src: "{{owncloud_vhost_template}}"
+    dest: "{{apache_conf_path}}/sites-available/{{owncloud_vhost_filename}}"
+    owner: root
+    group: root
+    mode: "0644"
+  notify: restart apache
+  when: owncloud_create_vhost
+
+- name: Add vhost symlink in sites-enabled.
+  file:
+    src: "{{apache_conf_path}}/sites-available/{{owncloud_vhost_filename}}"
+    dest: "{{apache_conf_path}}/sites-enabled/{{owncloud_vhost_filename}}"
+    state: link
+  notify: restart apache
+  when: owncloud_create_vhost
+
+- name: OwnCloud cron
+  copy:
+    content: "*/15  *  *  *  * /usr/bin/php -f /var/www/owncloud/cron.php"
+    dest: /var/spool/cron/crontabs/www-data
+
+- name: Change permissions and owner
+  file:
+    path: /var/spool/cron/crontabs/www-data
+    owner: www-data
+    group: crontab
+    mode: "600"
+
+- name: Create logrotate file
+  copy:
+    content: >
+      {{owncloud_path}}/owncloud/data/owncloud.log {
+        size 10M
+        rotate 12
+        copytruncate
+        missingok
+        compress
+        compresscmd /bin/gzip
+      }
+    dest: /etc/logrotate.d/owncloud
+
+- name: Load ocpermissions script
+  template: 
+    src: "{{owncloud_permissions_template}}"
+    dest: "{{owncloud_permissions_script}}"
+    mode: "644"
+
+- name: Run ocpermissions script
+  command: sh "{{owncloud_permissions_script}}"
+...

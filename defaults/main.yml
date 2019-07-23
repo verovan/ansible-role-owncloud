@@ -1,0 +1,15 @@
+---
+owncloud_url: https://download.owncloud.org/community/owncloud
+owncloud_download_path: /tmp/owncloud
+owncloud_version: "10.2.1"
+owncloud_vhost_filename: owncloud.conf
+owncloud_vhost_template: owncloud.conf.j2
+owncloud_alias: /owncloud
+owncloud_create_vhost: true
+owncloud_permissions_template: ocpermissions-debian.sh.j2
+owncloud_permissions_script: /usr/local/bin/ocpermissions
+
+php_packages_state: present
+
+apache_restart_state: restarted
+...

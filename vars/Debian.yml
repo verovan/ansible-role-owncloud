@@ -1,0 +1,24 @@
+---
+owncloud_path: /var/www
+
+apache_conf_path: /etc/apache2
+apache_service: apache2
+
+php_version: "7.0"
+__php_packages:
+  - php{{php_version}}-imagick 
+  - php{{php_version}}-common 
+  - php{{php_version}}-curl
+  - php{{php_version}}-common 
+  - php{{php_version}}-json 
+  - php{{php_version}}-mbstring 
+  - php{{php_version}}-mysql
+  - libapache2-mod-php{{php_version}}
+  - php{{php_version}}-ssh2 
+  - php{{php_version}}-xml 
+  - php{{php_version}}-zip
+
+mysql_service: mysql
+
+clamav_service: clamav-daemon
+...
